@@ -1,6 +1,8 @@
 
-import os
+
+import dj_database_url
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,19 +12,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(z=9r8k&*s6i04w&wr0q&(!t=32q$!wp9h0m1(e8ww!_8+hvi$'
+# SECRET_KEY = 'django-insecure-(z=9r8k&*s6i04w&wr0q&(!t=32q$!wp9h0m1(e8ww!_8+hvi$'
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() =="true"
 
-ALLOWED_HOSTS = ['.vercel.app']
+# ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'rest_framework',
-    'jazzmin',
+    
+    # 'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,7 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']}
@@ -91,6 +99,9 @@ DATABASES = {
     }
 }
 
+database_url = os.environ.get("DATABASE_URL")
+DATABASES['default'] = dj_database_url.parse('database_url')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -123,10 +134,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-JAZZMIN_SETTINGS = {
-    "site_brand": "Joint Wallet",
-    "copyright": "Joint Wallet",
-}
+# JAZZMIN_SETTINGS = {
+#     "site_brand": "Joint Wallet",
+#     "copyright": "Joint Wallet",
+# }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -134,9 +145,13 @@ JAZZMIN_SETTINGS = {
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL="/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR, 'media/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
